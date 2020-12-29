@@ -51,7 +51,9 @@ shooting_fouls <-
     inner_join(ref_jerseys, by = c("respRefId" = "officialId")) %>%
     rename(playerId = jerseyNum) %>%    
     group_by(gameId, playerId) %>%
-    summarise(avg_dist = mean(distance, na.rm = TRUE), n_fouls = n()) %>%
+    summarise(
+        avg_dist_lead_basket = mean(distance, na.rm = TRUE), n_fouls = n()
+    ) %>%
     select(gameId, playerId, avg_dist, n_fouls) %>%
     collect()
 
@@ -60,7 +62,7 @@ season_stats <-
     mutate(t_d = avg_dist * n_fouls) %>%
     group_by(playerId) %>%
     summarise(t_dist = sum(t_d), t_fouls = sum(n_fouls)) %>%
-    mutate(avg_dist = t_dist/t_fouls) %>%
+    mutate(avg_dist_lead_basket = t_dist/t_fouls) %>%
     select(playerId, avg_dist)
 
 shooting_fouls <- select(shooting_fouls, -n_fouls)

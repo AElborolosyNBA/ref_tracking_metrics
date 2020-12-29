@@ -1,4 +1,4 @@
-# Calculate distance between
+# Calculate time it takes lead to reach the baseline.
 library(checkpoint)
 checkpoint("2019-12-30")
 
@@ -17,7 +17,7 @@ refs_by_poss <-
 
 lead_transition_stat <-
     c(
-        "
+    "
 SELECT
 	track.gameDate,
 	track.gameId,
@@ -26,7 +26,7 @@ SELECT
 	(min(track.wcTime) - poss.wcStart)/ 1000 AS transition_time,
 FROM
 	`nba-tracking-data.NbaPlayerTracking.Tracking` track
-INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
+    INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
 	track.gameDate = poss.gameDate
 	AND track.gameId = poss.gameId
 	AND track.period = poss.period
@@ -34,14 +34,11 @@ INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
 WHERE
 	track.gameDate >= '2019-10-22'
 	AND track.teamId = 0
-	AND ((track.x >= 47
-	AND poss.basketX > 0)
-	OR (track.x <= -47
-	AND poss.basketX < 0))
-	AND poss.wcEnd - poss.wcStart >= 3000
-	-- Possessions longer than 3 seconds
-
-	GROUP BY track.gameDate,
+	AND sign(track.x) = sign(poss.basketX)
+	AND abs(track.x) > abs(poss.basketX)
+	AND poss.wcEnd - poss.wcStart >= 3000 -- Possessions longer than 3 seconds
+GROUP BY
+    track.gameDate,
 	track.gameId,
 	poss.possNum,
 	track.playerId,
@@ -53,7 +50,7 @@ ORDER BY
 	poss.possNum,
 	track.playerId
     "
-    )
+)
 
 transition_time <- dbGetQuery(gbq, lead_transition_stat)
 

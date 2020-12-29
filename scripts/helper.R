@@ -11,6 +11,8 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 
+options(scipen = 20)
+
 sql_server <-  dbConnect(
     odbc::odbc(),
     .connection_string = paste0(
