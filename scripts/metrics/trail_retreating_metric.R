@@ -101,7 +101,8 @@ game_stat <-
 
 season_stat <-
     res %>%
-    group_by(playerId) %>%
+    mutate(season = substr(gameId, 1, 5)) %>%
+    group_by(season, playerId) %>%
     summarise(
         n = n(),
         shifted = sum(ifelse(shift > 3.0, 1, 0)),
@@ -112,7 +113,7 @@ season_stat <-
         avg_d_shft = d_shift/shifted
     ) %>%
     select(
-        playerId,
+        season, playerId,
         perc_poss_quit = shift_perc
     )
 

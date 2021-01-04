@@ -17,7 +17,8 @@ scripts <- paste0(
 )
 
 for (metric in scripts) {
-    source(metrics)
+    print(metric)
+    source(metric)
 }
 
 files <- paste0(
@@ -34,14 +35,15 @@ season_data <- NULL
 game_data <- NULL
 
 for (file in files) {
+    print(file)
     tracking_metric <- read_csv(file)
-    if (str_detect(file, "games")) {
+    if (str_detect(file, "_games")) {
         if (is.null(game_data)) {
             game_data <- tracking_metric
         } else {
             game_data <- full_join(game_data, tracking_metric)
         }
-    } else if (str_detect(file, "season")) {
+    } else if (str_detect(file, "_season")) {
         if (is.null(season_data)) {
             season_data <- tracking_metric
         } else {
@@ -50,8 +52,8 @@ for (file in files) {
     }
 }
 
-season_data <- inner_join(ref_name_map, season_data) %>% select(-playerId)
 game_data <- inner_join(ref_name_map, game_data) %>% select(-playerId)
+season_data <- inner_join(ref_name_map, season_data) %>% select(-playerId)
 
 View(season_data)
 View(game_data)

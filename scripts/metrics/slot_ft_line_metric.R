@@ -97,7 +97,8 @@ game_stat <-
 
 season_stat <-
     ft_line_stats %>%
-    group_by(playerId) %>%
+    mutate(season = substr(gameId, 1, 5)) %>%
+    group_by(season, playerId) %>%
     summarise(
         time_by_ft_line_ext = sum(time_by_ft_line_ext),
         halfcourt_poss_duration = sum(halfcourt_poss_duration)
@@ -105,7 +106,7 @@ season_stat <-
     mutate(
         perc_time_by_ft_line_ext = time_by_ft_line_ext/halfcourt_poss_duration
     ) %>%
-    select(playerId, perc_time_by_ft_line_ext)
+    select(season, playerId, perc_time_by_ft_line_ext)
 
 write_csv(game_stat, "data/slot_ft_line_game.csv")
 write_csv(season_stat, "data/slot_ft_line_season.csv")

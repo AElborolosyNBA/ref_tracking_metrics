@@ -17,7 +17,7 @@ refs_by_poss <-
 
 slot_distance_stat <-
     c(
-"
+    "
 WITH middle_of_pack AS (
 SELECT
 	track.gameDate,
@@ -62,18 +62,18 @@ GROUP BY
     "
 )
 
-slot_distance <- dbGetQuery(gbq, slot_distance_stat)
+slot_distance <-
+    dbGetQuery(gbq, slot_distance_stat) %>% inner_join(refs_by_poss)
 
 game_stat <- 
     slot_distance %>%
-    inner_join(refs_by_poss) %>%
     group_by(gameId, playerId) %>%
     summarise(distance_from_pack = mean(avg_dist_from_pack, na.rm=TRUE))
 
 season_stat <-
     slot_distance %>%
-    inner_join(refs_by_poss) %>%
-    group_by(playerId) %>%
+    mutate(season = substr(gameId, 1, 5)) %>%
+    group_by(season, playerId) %>%
     summarise(distance_from_pack = mean(avg_dist_from_pack, na.rm=TRUE))
 
 write_csv(game_stat, "data/slot_transition_games.csv")

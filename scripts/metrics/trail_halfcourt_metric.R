@@ -65,7 +65,8 @@ game_stat <-
 
 season_stat <-
     trail_transition_stat %>%
-    group_by(playerId) %>%
+    mutate(season = substr(gameId, 1, 5)) %>%
+    group_by(season, playerId) %>%
     summarise(
         transition_time = sum(transition_time),
         time_trailing = sum(time_trailing),
@@ -74,7 +75,7 @@ season_stat <-
     mutate(
         perc_time_in_position_halfcourt = 100 * time_trailing/transition_time
     ) %>%
-    select(playerId, perc_time_in_position_halfcourt)
+    select(season, playerId, perc_time_in_position_halfcourt)
 
 write_csv(game_stat, "data/trail_halfcourt_games.csv")
 write_csv(season_stat, "data/trail_halfcourt_season.csv")

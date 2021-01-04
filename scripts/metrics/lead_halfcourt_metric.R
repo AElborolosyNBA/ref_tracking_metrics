@@ -54,16 +54,19 @@ shooting_fouls <-
     summarise(
         avg_dist_lead_basket = mean(distance, na.rm = TRUE), n_fouls = n()
     ) %>%
-    select(gameId, playerId, avg_dist, n_fouls) %>%
+    select(gameId, playerId, avg_dist_lead_basket, n_fouls) %>%
     collect()
 
 season_stats <-
     shooting_fouls %>%
-    mutate(t_d = avg_dist * n_fouls) %>%
-    group_by(playerId) %>%
+    mutate(
+        t_d = avg_dist_lead_basket * n_fouls,
+        season = substr(gameId, 1, 5)
+    ) %>%
+    group_by(season, playerId) %>%
     summarise(t_dist = sum(t_d), t_fouls = sum(n_fouls)) %>%
     mutate(avg_dist_lead_basket = t_dist/t_fouls) %>%
-    select(playerId, avg_dist)
+    select(season, playerId, avg_dist_lead_basket)
 
 shooting_fouls <- select(shooting_fouls, -n_fouls)
 

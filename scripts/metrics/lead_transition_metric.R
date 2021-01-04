@@ -52,18 +52,18 @@ ORDER BY
     "
 )
 
-transition_time <- dbGetQuery(gbq, lead_transition_stat)
-
+transition_time <-
+    dbGetQuery(gbq, lead_transition_stat) %>% inner_join(refs_by_poss)
+    
 game_stat <- 
     transition_time %>%
-    inner_join(refs_by_poss) %>%
     group_by(gameId, playerId) %>%
     summarise(time_to_baseline = mean(transition_time, na.rm=TRUE))
 
 season_stat <-
     transition_time %>%
-    inner_join(refs_by_poss) %>%
-    group_by(playerId) %>%
+    mutate(season = substr(gameId, 1, 5)) %>%
+    group_by(season, playerId) %>%
     summarise(time_to_baseline = mean(transition_time, na.rm=TRUE))
 
 write_csv(game_stat, "data/lead_transition_games.csv")
