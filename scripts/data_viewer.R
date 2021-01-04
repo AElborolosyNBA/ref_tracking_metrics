@@ -55,9 +55,6 @@ for (file in files) {
 game_data <- inner_join(ref_name_map, game_data) %>% select(-playerId)
 season_data <- inner_join(ref_name_map, season_data) %>% select(-playerId)
 
-View(season_data)
-View(game_data)
-
 write_csv(season_data, "data/season_aggregate.csv")
 write_csv(game_data, "data/game_aggregate.csv")
 
@@ -74,3 +71,5 @@ dbWriteTable(
     game_data,
     overwrite=TRUE
 )
+
+print(paste("Process run successfully on", Sys.time()))
