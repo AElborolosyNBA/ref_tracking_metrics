@@ -1,6 +1,6 @@
 # Calculate time slot spend within 3 feet of FT line extended.
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)

@@ -1,6 +1,6 @@
 # View the game level and season level performance stats and upload to db
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)
@@ -9,6 +9,8 @@ library(dplyr)
 library(readr)
 library(stringr)
 library(tidyr)
+
+options(gargle_oauth_email = TRUE)
 
 # Update all the metric files.
 scripts <- paste0(

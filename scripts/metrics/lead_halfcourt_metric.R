@@ -1,6 +1,6 @@
 # Calculate distance of the lead Ref from the basket during shooting fouls.
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)

@@ -1,6 +1,6 @@
 # Calculate the distance the trail 'retrats' at the end of a possession.
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)

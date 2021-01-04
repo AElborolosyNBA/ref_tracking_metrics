@@ -1,6 +1,6 @@
 # Calculate time it takes lead to reach the baseline.
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)

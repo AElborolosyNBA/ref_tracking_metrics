@@ -1,6 +1,6 @@
 # Calculate time spent behind the ball on transition as the trail
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)

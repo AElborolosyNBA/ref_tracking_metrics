@@ -1,6 +1,6 @@
 # Calculate distance between ref and median of players
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose=FALSE)
 
 library(bigrquery)
 library(dbplyr)
