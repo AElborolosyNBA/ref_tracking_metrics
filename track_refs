@@ -1,4 +1,4 @@
 #!/bin/sh
 source ~/.bash_profile
 cd ~/ref_tracking_metrics/
-RScript scripts/data_viewer.R &>> logs/daily_tracking_log.out
+Rscript scripts/data_viewer.R &>> logs/daily_tracking_log.out
