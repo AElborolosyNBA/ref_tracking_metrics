@@ -31,6 +31,7 @@ files <- paste0(
 ref_name_map <-
     ref_jerseys %>%
     select(Name, playerId = jerseyNum, officialId) %>%
+    distinct() %>%
     collect()
 
 season_data <- NULL
@@ -54,8 +55,13 @@ for (file in files) {
     }
 }
 
-game_data <- inner_join(ref_name_map, game_data) %>% select(-playerId)
-season_data <- inner_join(ref_name_map, season_data) %>% select(-playerId)
+game_data <-
+    inner_join(ref_name_map, game_data) %>%
+    select(-playerId) 
+
+season_data <-
+    inner_join(ref_name_map, season_data) %>%
+    select(-playerId) 
 
 write_csv(season_data, "data/season_aggregate.csv")
 write_csv(game_data, "data/game_aggregate.csv")
