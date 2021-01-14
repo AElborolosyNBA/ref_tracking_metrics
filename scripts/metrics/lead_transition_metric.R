@@ -53,7 +53,7 @@ ORDER BY
 )
 
 transition_time <-
-    dbGetQuery(gbq, lead_transition_stat) %>% inner_join(refs_by_poss)
+    DBI::dbGetQuery(gbq, lead_transition_stat) %>% inner_join(refs_by_poss)
     
 game_stat <- 
     transition_time %>%

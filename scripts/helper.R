@@ -2,7 +2,7 @@
 
 # Common Libraries and DB Connections
 library(checkpoint)
-checkpoint("2019-12-30")
+checkpoint("2019-12-30", verbose = FALSE)
 
 library(bigrquery)
 library(dbplyr)
@@ -12,6 +12,16 @@ library(ggplot2)
 library(tidyr)
 
 options(scipen = 20)
+
+current_year <- format(Sys.Date(), "%Y")
+current_month <- format(Sys.Date(), "%m")
+current_season <- NULL
+
+if (current_month >= 9) {
+    current_season <- as.integer(current_year)
+} else {
+    current_season <- as.integer(current_year) - 1
+}
 
 sql_server <-  dbConnect(
     odbc::odbc(),
@@ -40,7 +50,7 @@ list_referees <- function(sql_server) {
 
 # Identify L/S/T Ref for each possession of a game.
 identify_ref_position <- function(gbq) {
-    dbGetQuery(
+    DBI::dbGetQuery(
         gbq,
         "
         SELECT
@@ -49,6 +59,7 @@ identify_ref_position <- function(gbq) {
             possNum,
 	        playerId,
 	        officialId,
+            season,
 	        CASE WHEN dist_rank = 1 THEN 'Lead'
 	             WHEN dist_rank = 2 THEN 'Slot'
 	             WHEN dist_rank = 3 THEN 'Trail' END AS playerType
@@ -60,6 +71,7 @@ identify_ref_position <- function(gbq) {
                 poss.possNum,
 		        track.playerId,
 		        jersey.officialId,
+                jersey.season,
 		        row_number() OVER(
 		            PARTITION BY track.gameId, track.wcTime, track.frameId
 	                ORDER BY
@@ -82,5 +94,6 @@ identify_ref_position <- function(gbq) {
         ORDER BY
             gameDate, gameId, possNum
         "
-    )
+    ) %>%
+        select(-season)
 }
