@@ -2245,3 +2245,1234 @@ Joining, by = c("season", "playerId")
 Joining, by = "playerId"
 Joining, by = "playerId"
 [1] "Process run successfully on 2021-01-14 01:22:13"
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Loading required package: methods
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "./scripts/metrics/lead_halfcourt_metric.R"
+Using an auto-discovered, cached token.
+To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+See gargle's "Non-interactive auth" vignette for more details:
+https://gargle.r-lib.org/articles/non-interactive-auth.html
+The bigrquery package is using a cached token for aelborolosy@nba.com.
+Auto-refreshing stale OAuth token.
+[1] "./scripts/metrics/lead_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_ft_line_metric.R"
+Joining, by = c("gameId", "possNum")
+Joining, by = c("gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/trail_28_mark_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_halfcourt_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_retreating_metric.R"
+Joining, by = c("gameDate", "gameId", "period", "possNum", "playerId", "basketX")
+[1] "./scripts/metrics/trail_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./data/game_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  gameId = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/lead_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/lead_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/season_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  season = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  perc_time_by_ft_line_ext = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/slot_ft_line_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+[1] "./data/slot_ft_line_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/slot_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_28_mark_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_28_mark_season.csv"
+Parsed with column specification:
+cols(
+  playerId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_base_stat_sample.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  playerId = col_double(),
+  officialId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_retreating_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_retreating_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("season", "playerId")
+Joining, by = "playerId"
+Joining, by = "playerId"
+[1] "Process run successfully on 2021-01-15 01:25:43"
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Loading required package: methods
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "./scripts/metrics/lead_halfcourt_metric.R"
+Using an auto-discovered, cached token.
+To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+See gargle's "Non-interactive auth" vignette for more details:
+https://gargle.r-lib.org/articles/non-interactive-auth.html
+The bigrquery package is using a cached token for aelborolosy@nba.com.
+Auto-refreshing stale OAuth token.
+[1] "./scripts/metrics/lead_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_ft_line_metric.R"
+Joining, by = c("gameId", "possNum")
+Joining, by = c("gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/trail_28_mark_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_halfcourt_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_retreating_metric.R"
+Joining, by = c("gameDate", "gameId", "period", "possNum", "playerId", "basketX")
+[1] "./scripts/metrics/trail_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./data/game_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  gameId = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/lead_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/lead_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/season_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  season = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  perc_time_by_ft_line_ext = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_base_position_trail = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/slot_ft_line_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+[1] "./data/slot_ft_line_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/slot_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_28_mark_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_28_mark_season.csv"
+Parsed with column specification:
+cols(
+  playerId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_base_stat_sample.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  playerId = col_double(),
+  officialId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_retreating_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_retreating_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("season", "playerId")
+Joining, by = "playerId"
+Joining, by = "playerId"
+[1] "Process run successfully on 2021-01-16 01:24:04"
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Loading required package: methods
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "./scripts/metrics/lead_halfcourt_metric.R"
+Using an auto-discovered, cached token.
+To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+See gargle's "Non-interactive auth" vignette for more details:
+https://gargle.r-lib.org/articles/non-interactive-auth.html
+The bigrquery package is using a cached token for aelborolosy@nba.com.
+Auto-refreshing stale OAuth token.
+[1] "./scripts/metrics/lead_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_ft_line_metric.R"
+Joining, by = c("gameId", "possNum")
+Joining, by = c("gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/trail_28_mark_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_halfcourt_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_retreating_metric.R"
+Joining, by = c("gameDate", "gameId", "period", "possNum", "playerId", "basketX")
+[1] "./scripts/metrics/trail_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./data/game_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  gameId = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/lead_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/lead_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/season_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  season = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  perc_time_by_ft_line_ext = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_base_position_trail = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/slot_ft_line_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+[1] "./data/slot_ft_line_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/slot_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_28_mark_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_28_mark_season.csv"
+Parsed with column specification:
+cols(
+  playerId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_base_stat_sample.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  playerId = col_double(),
+  officialId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_retreating_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_retreating_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("season", "playerId")
+Joining, by = "playerId"
+Joining, by = "playerId"
+[1] "Process run successfully on 2021-01-17 01:24:56"
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Loading required package: methods
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "./scripts/metrics/lead_halfcourt_metric.R"
+Using an auto-discovered, cached token.
+To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+See gargle's "Non-interactive auth" vignette for more details:
+https://gargle.r-lib.org/articles/non-interactive-auth.html
+The bigrquery package is using a cached token for aelborolosy@nba.com.
+Auto-refreshing stale OAuth token.
+[1] "./scripts/metrics/lead_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_ft_line_metric.R"
+Joining, by = c("gameId", "possNum")
+Joining, by = c("gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/trail_28_mark_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_halfcourt_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_retreating_metric.R"
+Joining, by = c("gameDate", "gameId", "period", "possNum", "playerId", "basketX")
+[1] "./scripts/metrics/trail_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./data/game_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  gameId = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/lead_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/lead_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/season_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  season = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  perc_time_by_ft_line_ext = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_base_position_trail = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/slot_ft_line_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+[1] "./data/slot_ft_line_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/slot_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_28_mark_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_28_mark_season.csv"
+Parsed with column specification:
+cols(
+  playerId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_base_stat_sample.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  playerId = col_double(),
+  officialId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_retreating_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_retreating_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("season", "playerId")
+Joining, by = "playerId"
+Joining, by = "playerId"
+[1] "Process run successfully on 2021-01-18 01:24:03"
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Loading required package: methods
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "./scripts/metrics/lead_halfcourt_metric.R"
+Using an auto-discovered, cached token.
+To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+See gargle's "Non-interactive auth" vignette for more details:
+https://gargle.r-lib.org/articles/non-interactive-auth.html
+The bigrquery package is using a cached token for aelborolosy@nba.com.
+Auto-refreshing stale OAuth token.
+[1] "./scripts/metrics/lead_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_ft_line_metric.R"
+Joining, by = c("gameId", "possNum")
+Joining, by = c("gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/trail_28_mark_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_halfcourt_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_retreating_metric.R"
+Joining, by = c("gameDate", "gameId", "period", "possNum", "playerId", "basketX")
+[1] "./scripts/metrics/trail_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./data/game_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  gameId = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/lead_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/lead_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/season_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  season = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  perc_time_by_ft_line_ext = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_base_position_trail = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/slot_ft_line_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+[1] "./data/slot_ft_line_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/slot_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_28_mark_game.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_28_mark_season.csv"
+Parsed with column specification:
+cols(
+  playerId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_base_stat_sample.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  playerId = col_double(),
+  officialId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_retreating_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_retreating_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("season", "playerId")
+Joining, by = "playerId"
+Joining, by = "playerId"
+[1] "Process run successfully on 2021-01-19 01:24:26"
+
+checkpoint: Part of the Reproducible R Toolkit from Microsoft
+https://mran.microsoft.com/documents/rro/reproducibility/
+Loading required package: methods
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+[1] "./scripts/metrics/lead_halfcourt_metric.R"
+Using an auto-discovered, cached token.
+To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+See gargle's "Non-interactive auth" vignette for more details:
+https://gargle.r-lib.org/articles/non-interactive-auth.html
+The bigrquery package is using a cached token for aelborolosy@nba.com.
+Auto-refreshing stale OAuth token.
+[1] "./scripts/metrics/lead_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_ft_line_metric.R"
+Joining, by = c("gameId", "possNum")
+Joining, by = c("gameId", "possNum", "playerId")
+[1] "./scripts/metrics/slot_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum", "playerId")
+[1] "./scripts/metrics/trail_28_mark_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_halfcourt_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./scripts/metrics/trail_retreating_metric.R"
+Joining, by = c("gameDate", "gameId", "period", "possNum", "playerId", "basketX")
+[1] "./scripts/metrics/trail_transition_metric.R"
+Joining, by = c("gameDate", "gameId", "possNum")
+[1] "./data/game_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  gameId = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/lead_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  avg_dist_lead_basket = col_double()
+)
+[1] "./data/lead_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/lead_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  time_to_baseline = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/season_aggregate.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  officialId = col_double(),
+  season = col_character(),
+  avg_dist_lead_basket = col_double(),
+  time_to_baseline = col_double(),
+  perc_time_by_ft_line_ext = col_double(),
+  distance_from_pack = col_double(),
+  perc_time_in_base_position_trail = col_double(),
+  perc_time_in_position_halfcourt = col_double(),
+  perc_poss_quit = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+[1] "./data/slot_ft_line_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_ft_line_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_by_ft_line_ext = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/slot_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/slot_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  distance_from_pack = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_28_mark_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_28_mark_season.csv"
+Parsed with column specification:
+cols(
+  playerId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_base_stat_sample.csv"
+Parsed with column specification:
+cols(
+  Name = col_character(),
+  playerId = col_double(),
+  officialId = col_double(),
+  season = col_character(),
+  perc_time_in_base_position_trail = col_double()
+)
+[1] "./data/trail_halfcourt_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_halfcourt_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_halfcourt = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_retreating_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_retreating_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_poss_quit = col_double()
+)
+Joining, by = c("season", "playerId")
+[1] "./data/trail_transition_games.csv"
+Parsed with column specification:
+cols(
+  gameId = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("gameId", "playerId")
+[1] "./data/trail_transition_season.csv"
+Parsed with column specification:
+cols(
+  season = col_character(),
+  playerId = col_double(),
+  perc_time_in_position_transition = col_double()
+)
+Joining, by = c("season", "playerId")
+Joining, by = "playerId"
+Joining, by = "playerId"
+[1] "Process run successfully on 2021-01-20 01:24:15"

@@ -108,5 +108,5 @@ season_stat <-
     ) %>%
     select(season, playerId, perc_time_by_ft_line_ext)
 
-write_csv(game_stat, "data/slot_ft_line_game.csv")
+write_csv(game_stat, "data/slot_ft_line_games.csv")
 write_csv(season_stat, "data/slot_ft_line_season.csv")

@@ -85,7 +85,7 @@ identify_ref_position <- function(gbq) {
 		        AND poss.gameId = track.gameId
 		        AND track.wcTime BETWEEN poss.wcStart AND poss.wcEnd
 	        WHERE
-		        track.gameDate >= DATE '2019-10-22'
+                SUBSTR(track.gameId, 4, 2) = SUBSTR(CAST(jersey.season AS STRING), 3, 2)
                 AND track.teamId = 0
                 -- Remove possessions shorter than 3 seconds
                 AND track.wcTime = poss.wcStart + 3000) poss_info

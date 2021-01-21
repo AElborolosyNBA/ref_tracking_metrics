@@ -80,5 +80,5 @@ season_stat <-
     select(playerId, season, perc_time_in_base_position_trail)
 
 
-write_csv(game_stat, "data/trail_28_mark_game.csv")
+write_csv(game_stat, "data/trail_28_mark_games.csv")
 write_csv(season_stat, "data/trail_28_mark_season.csv")
