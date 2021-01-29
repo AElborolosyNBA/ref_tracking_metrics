@@ -1,4 +1,4 @@
-# Calculate distance of the lead Ref from the basket during shooting fouls.
+# Calculate time spent at least 12 feet away from rim on the baseline.
 library(checkpoint)
 checkpoint("2019-12-30", verbose=FALSE)
 
@@ -9,66 +9,69 @@ library(dplyr)
 library(readr)
 library(tidyr)
 
-gbq <- dbConnect(
-    bigrquery::bigquery(),
-    project = "bball-strategy-analytics",
-    dataset = "nba-tracking-data",
-    billing = "bball-strategy-analytics"
-)
+source("scripts/helper.R")
 
-track <- tbl(gbq, "nba-tracking-data.NbaPlayerTracking.Tracking")
-poss <- tbl(gbq, "nba-tracking-data.NbaPlayerTracking.Possessions")
-gbq_reviews <- tbl(gbq, "bball-strategy-analytics.GrsReviews.Reviews")
-ref_jerseys <- tbl(gbq, "bball-strategy-analytics.GrsReviews.JerseyLookUp")
+baseline_query <-
+    "
+    SELECT
+        track.gameId,
+        poss.possNum,
+        track.playerId,
+        SUM(CASE WHEN track.y >= 12 THEN 1 ELSE 0 END) AS wide_lead,
+        CAST(COUNT(*) AS NUMERIC) AS n_frames
+    FROM
+        `nba-tracking-data.NbaPlayerTracking.Tracking` track
+    INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
+        track.gameDate = poss.gameDate
+        AND track.gameId = poss.gameId
+        AND track.wcTime BETWEEN poss.wcStart AND poss.wcEnd
+    WHERE
+        --track.gameDate = '2019-10-22' AND
+        track.teamId = 0
+        AND sign(track.x) = sign(poss.basketX)
+        AND abs(track.x) >= 43
+        -- Ref is behind rim.
+    GROUP BY
+        track.gameId,
+        poss.possNum,
+        track.playerId
+    ORDER BY
+        track.gameId,
+        poss.possNum,
+        track.playerId
+    "
 
-# Distance from Ref to Rim ----
-shooting_fouls <-
-    gbq_reviews %>%
-    filter(
-        respRefLoc == "Lead",
-        infractionType == "Foul: Shooting",
-        gameDate >= '2019-10-22'
-    ) %>%
-    mutate(
-        gameDate = as.Date(gameDate),
-        callRating = case_when(
-            playerAction %in% c("INF", "WPA") & called == "C" ~ "CC",
-            playerAction %in% c("INF") & called == "NC" ~ "INC",
-            playerAction %in% c("NI", "SFA", "PFA", "BCA") & called == "C" ~ "IC",
-            playerAction %in% c("NI", "SFA", "PFA", "BCA") & called == "NC" ~ "CNC"
-        )
-    ) %>%
-    select(-gcTime) %>%
-    inner_join(., track, by = c("gameDate", "gameId", "wcTime", "period")) %>%
-    inner_join(., poss, by = c("gameDate", "gameId", "period", "possNum")) %>%
-    filter(between(wcTime, wcStart, wcEnd), gcStopped == FALSE) %>%
-    select(
-        gameDate, gameId, possNum, respRefId,
-        x, y, basketX, callRating
-    ) %>%
-    mutate(distance = sqrt((x - basketX)**2 + y**2)) %>%
-    filter(distance <= 25) %>%
-    inner_join(ref_jerseys, by = c("respRefId" = "officialId")) %>%
-    rename(playerId = jerseyNum) %>%    
+baseline_stat <-
+    dbGetQuery(gbq, baseline_query) %>%
+    group_by(gameId, possNum) %>%
+    slice(which.max(wide_lead/n_frames))
+
+game_stat <-
+    baseline_stat %>%
     group_by(gameId, playerId) %>%
     summarise(
-        avg_dist_lead_basket = mean(distance, na.rm = TRUE), n_fouls = n()
+        wide_lead = sum(wide_lead),
+        n_frames = sum(n_frames)
     ) %>%
-    select(gameId, playerId, avg_dist_lead_basket, n_fouls) %>%
-    collect()
-
-season_stats <-
-    shooting_fouls %>%
     mutate(
-        t_d = avg_dist_lead_basket * n_fouls,
-        season = substr(gameId, 1, 5)
+        perc_time_in_base_position_lead = wide_lead/n_frames
     ) %>%
+    arrange(gameId, playerId) %>%
+    select(gameId, playerId, perc_time_in_base_position_lead)
+
+season_stat <-
+    baseline_stat %>%
+    mutate(season = substr(gameId, 1, 5)) %>%
     group_by(season, playerId) %>%
-    summarise(t_dist = sum(t_d), t_fouls = sum(n_fouls)) %>%
-    mutate(avg_dist_lead_basket = t_dist/t_fouls) %>%
-    select(season, playerId, avg_dist_lead_basket)
+    summarise(
+        wide_lead = sum(wide_lead),
+        n_frames = sum(n_frames)
+    ) %>%
+    mutate(
+        perc_time_in_base_position_lead = wide_lead/n_frames
+    ) %>%
+    arrange(playerId, season) %>%
+    select(playerId, season, perc_time_in_base_position_lead)
 
-shooting_fouls <- select(shooting_fouls, -n_fouls)
-
-write_csv(shooting_fouls, "data/lead_halfcourt_games.csv")
-write_csv(season_stats, "data/lead_halfcourt_season.csv")
+write_csv(game_stat, "data/wide_lead_games.csv")
+write_csv(season_stat, "data/wide_lead_season.csv")

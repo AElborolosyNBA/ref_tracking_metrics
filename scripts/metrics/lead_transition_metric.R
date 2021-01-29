@@ -11,60 +11,89 @@ library(tidyr)
 
 source("scripts/helper.R")
 
-refs_by_poss <-
-    identify_ref_position(gbq) %>%
-    filter(playerType == 'Lead')
-
-lead_transition_stat <-
-    c(
+transition_speed_query <- c(
     "
+WITH transition_end AS (
 SELECT
-	track.gameDate,
-	track.gameId,
-	poss.possNum,
-	track.playerId,
-	(min(track.wcTime) - poss.wcStart)/ 1000 AS transition_time,
+    track.gameDate,
+    track.gameId,
+    poss.possNum,
+    track.playerId,
+    min(track.wcTime) AS transition_end
 FROM
-	`nba-tracking-data.NbaPlayerTracking.Tracking` track
-    INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
-	track.gameDate = poss.gameDate
-	AND track.gameId = poss.gameId
-	AND track.period = poss.period
-	AND track.wcTime BETWEEN poss.wcStart AND poss.wcEnd
+    `nba-tracking-data.NbaPlayerTracking.Tracking` track
+INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
+    track.gameDate = poss.gameDate
+    AND track.gameId = poss.gameId
+    AND track.period = poss.period
+    AND track.wcTime BETWEEN poss.wcStart AND poss.wcEnd
 WHERE
-	track.gameDate >= '2019-10-22'
-	AND track.teamId = 0
-	AND sign(track.x) = sign(poss.basketX)
-	AND abs(track.x) > abs(poss.basketX)
-	AND poss.wcEnd - poss.wcStart >= 3000 -- Possessions longer than 3 seconds
+    track.teamId = 0
+    AND sign(track.x) = sign(poss.basketX)
+    AND abs(track.x) > abs(poss.basketX)
 GROUP BY
     track.gameDate,
-	track.gameId,
-	poss.possNum,
-	track.playerId,
-	poss.wcStart,
-	poss.wcEnd
+    track.gameId,
+    poss.possNum,
+    track.playerId
 ORDER BY
-	track.gameDate,
-	track.gameId,
-	poss.possNum,
-	track.playerId
+    track.gameDate,
+    track.gameId,
+    poss.possNum,
+    track.playerId )
+SELECT
+    gameId,
+    possNum,
+    playerId,
+    transition_distance,
+    CASE
+        WHEN transition_time <> 0 THEN transition_distance / transition_time
+        ELSE NULL
+    END AS transition_speed
+FROM
+(
+    SELECT
+        track.gameId,
+        poss.possNum,
+        track.playerId,
+        (transition_end.transition_end - poss.wcStart)/ 1000 AS transition_time,
+        CAST(abs(track.x - poss.basketX) AS NUMERIC) AS transition_distance
+    FROM
+        `nba-tracking-data.NbaPlayerTracking.Tracking` track
+    INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
+        track.gameDate = poss.gameDate
+        AND track.gameId = poss.gameId
+        AND track.period = poss.period
+        AND track.wcTime = poss.wcStart
+    INNER JOIN transition_end ON
+        transition_end.gameDate = track.gameDate
+        AND transition_end.gameId = track.gameId
+        AND transition_end.possNum = poss.possNum
+        AND transition_end.playerId = track.playerId
+    WHERE
+        track.teamId = 0
+        AND NOT gcStopped)
     "
 )
 
-transition_time <-
-    DBI::dbGetQuery(gbq, lead_transition_stat) %>% inner_join(refs_by_poss)
-    
+transition_speed_stat <-
+    DBI::dbGetQuery(gbq, transition_speed_query) %>%
+    group_by(gameId, possNum) %>%
+    filter(!is.na(transition_speed)) %>%
+    slice(which.min(transition_distance)) %>%
+    # Convert feet per second to miles per hour
+    mutate(transition_speed = 0.681818 * transition_speed)
+
 game_stat <- 
-    transition_time %>%
+    transition_speed_stat %>%
     group_by(gameId, playerId) %>%
-    summarise(time_to_baseline = mean(transition_time, na.rm=TRUE))
+    summarise(transition_speed = mean(transition_speed, na.rm=TRUE))
 
 season_stat <-
-    transition_time %>%
+    transition_speed_stat %>%
     mutate(season = substr(gameId, 1, 5)) %>%
     group_by(season, playerId) %>%
-    summarise(time_to_baseline = mean(transition_time, na.rm=TRUE))
+    summarise(transition_speed = mean(transition_speed, na.rm=TRUE))
 
 write_csv(game_stat, "data/lead_transition_games.csv")
 write_csv(season_stat, "data/lead_transition_season.csv")

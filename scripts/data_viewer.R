@@ -68,14 +68,14 @@ write_csv(game_data, "data/game_aggregate.csv")
 
 dbWriteTable(
     sql_server,
-    "referee_tracking_metrics_season",
+    "referee_tracking_metrics_season_dev",
     season_data,
     overwrite=TRUE
 )
 
 dbWriteTable(
     sql_server,
-    "referee_tracking_metrics_game",
+    "referee_tracking_metrics_game_dev",
     game_data,
     overwrite=TRUE
 )

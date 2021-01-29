@@ -1,4 +1,4 @@
-# Calculate the distance the trail 'retrats' at the end of a possession.
+# Calculate the distance the trail 'retreats' at the end of a possession.
 library(checkpoint)
 checkpoint("2019-12-30", verbose=FALSE)
 
@@ -11,111 +11,94 @@ library(tidyr)
 
 source("scripts/helper.R")
 
-refs_by_poss <-
-    identify_ref_position(gbq) %>%
-    filter(playerType == 'Trail')
-
-event <- tbl(gbq, "nba-tracking-data.NbaPlayerTracking.Events")
-
-ordered_events <-
-    event %>%
-    filter(!(eventType %in% c("FT", "REP", "TMO", "JMP"))) %>%
-    select(gameDate, gameId, period, possId, gcTime, wcTime) %>%
-    group_by(gameDate, gameId, period, possId) %>%
-    arrange(desc(gcTime)) %>%
-    mutate(event_order = row_number()) %>%
-    ungroup() %>%
-    filter(event_order == 1) %>%
-    select(
-        gameDate, gameId, period, possId,
-        timer_start = gcTime, dupe_check = wcTime,
-        -event_order
-    )
-
-ref_loc <-
-    track %>%
-    filter(teamId == 0, gcStopped == FALSE) %>%
-    inner_join(poss, by=c("gameDate", "gameId", "period")) %>%
-    filter(between(gcTime, gcEnd, gcStart)) %>%
-    select(
-        gameDate, gameId, period, possId, basketX, wcTime,
-        gcTime, x, y, playerId, gcStart, gcEnd, wcEnd, possNum
-    ) %>%
-    inner_join(
-        ordered_events,
-        by = c("gameDate", "gameId", "period", "possId")
-    ) %>%
-    filter(wcTime == dupe_check || wcTime == wcEnd) %>%
-    mutate(
-        position = ifelse(
-            gcTime == timer_start,
-            "Start",
-            ifelse(gcTime == gcEnd, "End", "Error")
-        )
-    )
-
-start <-
-    filter(ref_loc, position == "Start") %>%
-    select(
-        gameDate, gameId, period, possNum, playerId, basketX,
-        start_x = x, start_y = y, start_clock = gcTime
-    ) %>%
-    mutate(start_dist = abs(start_x - basketX))
-
-end <-
-    filter(ref_loc, position == "End") %>%
-    select(
-        gameDate, gameId, period, possNum, playerId, basketX,
-        end_x = x, end_y = y, end_clock = gcTime
-    ) %>%
-    mutate(end_dist = abs(end_x - basketX))
-
-res <-
-    inner_join(start, end) %>%
-    mutate(
-        shift = end_dist - start_dist,
-        t = start_clock - end_clock, # Using decrementing gcTime
-    ) %>%
-    filter(t > 0) %>%
-    select(gameDate, gameId, period, possNum, playerId, shift, t) %>%
-    collect() %>%
-    mutate(v_shift = shift/t)
+trail_retreating_query <-
+    "
+WITH reference_times AS (
+SELECT
+    gameDate,
+    gameId,
+    prior_poss_num AS possNum,
+    basketX,
+    prior_event_type,
+    eventType,
+    prior_event_time,
+    wcStart,
+FROM (
+    SELECT
+        poss.gameDate,
+        poss.gameId,
+        poss.possNum,
+    LAG(poss.basketX, 1) OVER (
+        PARTITION BY event.gameDate, event.gameId
+        ORDER BY event.gameDate, event.gameId, event.wcTime) AS basketX,
+    LAG(event.eventType, 1) OVER (
+        PARTITION BY event.gameDate, event.gameId
+        ORDER BY event.gameDate, event.gameId, event.wcTime) AS prior_event_type,
+    event.eventType,
+    LAG(event.wcTime, 1) OVER (
+        PARTITION BY event.gameDate, event.gameId
+        ORDER BY event.gameDate, event.gameId, event.wcTime) AS prior_event_time,
+    poss.wcStart,
+    LAG(poss.possNum, 1) OVER (
+        PARTITION BY event.gameDate, event.gameId
+        ORDER BY event.gameDate, event.gameId, event.wcTime) AS prior_poss_num,
+FROM 
+    `nba-tracking-data.NbaPlayerTracking.Events` event
+INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
+    event.gameDate = poss.gameDate
+    AND event.gameId = poss.gameId
+    AND event.possId = poss.possId
+)
+WHERE
+prior_poss_num = possNum - 1
+AND prior_event_time <> wcStart
+)
+SELECT
+    reference_times.*,
+    curr.playerId,
+    ABS(reference_times.basketX - prior.x) AS basket_disk,
+    ABS(curr.x - prior.x) AS shift_distance,
+    ABS(
+        reference_times.wcStart - reference_times.prior_event_time
+    )/1000 shift_time
+FROM 
+    reference_times
+INNER JOIN `nba-tracking-data.NbaPlayerTracking.Tracking` prior ON
+    prior.gameDate = reference_times.gameDate
+    AND prior.gameId = reference_times.gameId
+    AND prior.wcTime = reference_times.prior_event_time
+INNER JOIN  `nba-tracking-data.NbaPlayerTracking.Tracking` curr ON
+    curr.gameDate = reference_times.gameDate
+    AND curr.gameId = reference_times.gameId
+    AND curr.wcTime = reference_times.wcStart
+    AND curr.playerId = prior.playerId
+WHERE
+    curr.teamId = 0
+    AND reference_times.prior_event_type NOT IN ('FT', 'REP', 'TMO', 'JMP')
+    AND reference_times.eventType NOT IN ('FT', 'REP', 'TMO', 'JMP')
+ORDER BY
+    reference_times.gameDate,
+    reference_times.gameId,
+    reference_times.wcStart
+    "
+    
+trail_retreating_stat <-
+    dbGetQuery(gbq, trail_retreating_query) %>%
+    group_by(gameId, possNum) %>%
+    slice(which.max(basket_disk)) %>%
+    filter(shift_time <= 5.0) %>%
+    mutate(shifted = ifelse(shift_distance >= 3.0, 1, 0))
 
 game_stat <-
-    res %>%
+    trail_retreating_stat %>%
     group_by(gameId, playerId) %>%
-    summarise(
-        n = n(),
-        shifted = sum(ifelse(shift > 3.0, 1, 0)),
-        d_shift = sum(ifelse(shift > 3.0, shift, 0))
-    ) %>%
-    mutate(
-        shift_perc = 100*shifted/n,
-        avg_d_shft = d_shift/shifted
-    ) %>%
-    select(
-        gameId,
-        playerId,
-        perc_poss_quit = shift_perc
-    )
+    summarise(perc_poss_completed = 1- sum(shifted)/n())
 
 season_stat <-
-    res %>%
+    trail_retreating_stat %>%
     mutate(season = substr(gameId, 1, 5)) %>%
     group_by(season, playerId) %>%
-    summarise(
-        n = n(),
-        shifted = sum(ifelse(shift > 3.0, 1, 0)),
-        d_shift = sum(ifelse(shift > 3.0, shift, 0))
-    ) %>%
-    mutate(
-        shift_perc = 100*shifted/n,
-        avg_d_shft = d_shift/shifted
-    ) %>%
-    select(
-        season, playerId,
-        perc_poss_quit = shift_perc
-    )
+    summarise(perc_poss_completed = 1- sum(shifted)/n())
 
 write_csv(game_stat, "data/trail_retreating_games.csv")
 write_csv(season_stat, "data/trail_retreating_season.csv")
