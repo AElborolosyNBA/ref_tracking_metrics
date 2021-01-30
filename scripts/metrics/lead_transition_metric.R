@@ -36,11 +36,7 @@ GROUP BY
     track.gameId,
     poss.possNum,
     track.playerId
-ORDER BY
-    track.gameDate,
-    track.gameId,
-    poss.possNum,
-    track.playerId )
+    )
 SELECT
     gameId,
     possNum,

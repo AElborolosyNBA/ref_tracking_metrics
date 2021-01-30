@@ -18,7 +18,13 @@ SELECT
     poss.possNum,
     track.playerId,
     -- Ref is 3+ feet behind ball.
-    SUM(CASE WHEN track.x <= track.ballX - 3 THEN 1 ELSE 0 END) AS trail_behind_ball,
+    SUM(
+        CASE
+            WHEN poss.basketX > 0 AND track.x <= track.ballX - 3 THEN 1
+            WHEN poss.basketX < 0 AND abs(track.x) <= abs(track.ballX) - 3 THEN 1
+            ELSE 0
+        END
+    ) AS trail_behind_ball,
     CAST(COUNT(*) AS NUMERIC) AS n_frames
 FROM
     `nba-tracking-data.NbaPlayerTracking.Tracking` track

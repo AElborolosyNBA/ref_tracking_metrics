@@ -13,26 +13,24 @@ library(tidyr)
 options(gargle_oauth_email = TRUE)
 
 # Update all the metric files.
-scripts <- paste0(
-    "./scripts/metrics/",
-    list.files("./scripts/metrics/")
-)
+scripts <- list.files("./scripts/metrics/", full.names = TRUE)
+do.call(file.remove, list(list.files("./data/", full.names = TRUE)))
 
 for (metric in scripts) {
     print(metric)
     source(metric)
 }
 
-files <- paste0(
-    "./data/",
-    list.files("./data/")
-)
-
 ref_name_map <-
     ref_jerseys %>%
     select(Name, playerId = jerseyNum, officialId) %>%
     distinct() %>%
     collect()
+
+files <- paste0(
+    "./data/",
+    list.files("./data/")
+)
 
 season_data <- NULL
 game_data <- NULL
