@@ -17,7 +17,7 @@ baseline_query <-
         track.gameId,
         poss.possNum,
         track.playerId,
-        SUM(CASE WHEN track.y >= 12 THEN 1 ELSE 0 END) AS wide_lead,
+        SUM(CASE WHEN ABS(track.y) >= 12 THEN 1 ELSE 0 END) AS wide_lead,
         CAST(COUNT(*) AS NUMERIC) AS n_frames
     FROM
         `nba-tracking-data.NbaPlayerTracking.Tracking` track
@@ -26,7 +26,6 @@ baseline_query <-
         AND track.gameId = poss.gameId
         AND track.wcTime BETWEEN poss.wcStart AND poss.wcEnd
     WHERE
-        --track.gameDate = '2019-10-22' AND
         track.teamId = 0
         AND sign(track.x) = sign(poss.basketX)
         AND abs(track.x) >= 43
@@ -73,5 +72,6 @@ season_stat <-
     arrange(playerId, season) %>%
     select(playerId, season, perc_time_in_base_position_lead)
 
+write_csv(baseline_stat, "data/wide_lead_poss.csv")
 write_csv(game_stat, "data/wide_lead_games.csv")
 write_csv(season_stat, "data/wide_lead_season.csv")

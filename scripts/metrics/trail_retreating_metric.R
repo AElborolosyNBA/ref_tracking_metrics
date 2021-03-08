@@ -1,4 +1,5 @@
-# Calculate the distance the trail 'retreats' at the end of a possession.
+# Assess if trails perform/underperform at end of possessions and if retreating
+# has anything to do with that.
 library(checkpoint)
 checkpoint("2019-12-30", verbose=FALSE)
 
@@ -87,7 +88,8 @@ trail_retreating_stat <-
     group_by(gameId, possNum) %>%
     slice(which.max(basket_disk)) %>%
     filter(shift_time <= 5.0) %>%
-    mutate(shifted = ifelse(shift_distance >= 3.0, 1, 0))
+    mutate(shifted = ifelse(shift_distance >= 3.0, 1, 0)) %>%
+    select(gameId, playerId, possNum, shifted)
 
 game_stat <-
     trail_retreating_stat %>%
@@ -100,5 +102,6 @@ season_stat <-
     group_by(season, playerId) %>%
     summarise(perc_poss_completed = 1- sum(shifted)/n())
 
+write_csv(trail_retreating_stat, "data/trail_retreating_poss.csv")
 write_csv(game_stat, "data/trail_retreating_games.csv")
 write_csv(season_stat, "data/trail_retreating_season.csv")

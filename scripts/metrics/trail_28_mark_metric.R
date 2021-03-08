@@ -43,6 +43,6 @@ season_stat <-
     arrange(playerId, season) %>%
     select(playerId, season, perc_time_by_28_mark)
 
-
+write_csv(trail_mark_stat, "data/trail_28_mark_poss.csv")
 write_csv(game_stat, "data/trail_28_mark_games.csv")
 write_csv(season_stat, "data/trail_28_mark_season.csv")

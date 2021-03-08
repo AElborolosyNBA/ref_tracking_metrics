@@ -78,7 +78,9 @@ transition_speed_stat <-
     filter(!is.na(transition_speed)) %>%
     slice(which.min(transition_distance)) %>%
     # Convert feet per second to miles per hour
-    mutate(transition_speed = 0.681818 * transition_speed)
+    mutate(transition_speed = 0.681818 * transition_speed) %>%
+    ungroup() %>%
+    select(gameId, possNum, playerId, transition_speed)
 
 game_stat <- 
     transition_speed_stat %>%
@@ -91,5 +93,6 @@ season_stat <-
     group_by(season, playerId) %>%
     summarise(transition_speed = mean(transition_speed, na.rm=TRUE))
 
+write_csv(transition_speed_stat, "data/lead_transition_poss.csv")
 write_csv(game_stat, "data/lead_transition_games.csv")
 write_csv(season_stat, "data/lead_transition_season.csv")

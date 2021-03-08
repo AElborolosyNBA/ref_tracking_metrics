@@ -33,6 +33,7 @@ files <- paste0(
 )
 
 season_data <- NULL
+poss_data <- NULL
 game_data <- NULL
 
 for (file in files) {
@@ -50,8 +51,18 @@ for (file in files) {
         } else {
             season_data <- full_join(season_data, tracking_metric)
         }
+    } else if (str_detect(file, "_poss")) {
+        if (is.null(poss_data)) {
+            poss_data <- tracking_metric
+        } else {
+            poss_data <- full_join(poss_data, tracking_metric)
+        }
     }
 }
+
+poss_data <-
+    inner_join(ref_name_map, poss_data) %>%
+    select(-playerId)
 
 game_data <-
     inner_join(ref_name_map, game_data) %>%
@@ -61,13 +72,14 @@ season_data <-
     inner_join(ref_name_map, season_data) %>%
     select(-playerId) 
 
-write_csv(season_data, "data/season_aggregate.csv")
+write_csv(poss_data, "data/poss_aggregate.csv")
 write_csv(game_data, "data/game_aggregate.csv")
+write_csv(season_data, "data/season_aggregate.csv")
 
 dbWriteTable(
     sql_server,
-    "referee_tracking_metrics_season",
-    season_data,
+    "referee_tracking_metrics_possession",
+    poss_data,
     overwrite=TRUE
 )
 
@@ -75,6 +87,13 @@ dbWriteTable(
     sql_server,
     "referee_tracking_metrics_game",
     game_data,
+    overwrite=TRUE
+)
+
+dbWriteTable(
+    sql_server,
+    "referee_tracking_metrics_season",
+    season_data,
     overwrite=TRUE
 )
 

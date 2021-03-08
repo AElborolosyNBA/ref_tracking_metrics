@@ -52,6 +52,14 @@ trailing_transition_stat <-
     group_by(gameId, possNum) %>%
     slice(which.max(trail_behind_ball/n_frames))
 
+poss_stat <-
+    trailing_transition_stat %>%
+    select(gameId, possNum, playerId, trail_behind_ball, n_frames) %>%
+    group_by(gameId, possNum, playerId) %>%
+    summarise(
+        perc_time_behind_ball_transition = sum(trail_behind_ball)/sum(n_frames)
+    )
+
 game_stat <-
     trailing_transition_stat %>%
     group_by(gameId, playerId) %>%
@@ -71,5 +79,6 @@ season_stat <-
     arrange(playerId, season) %>%
     select(playerId, season, perc_time_behind_ball_transition)
 
+write_csv(trailing_transition_stat, "data/trail_transition_poss.csv")
 write_csv(game_stat, "data/trail_transition_games.csv")
 write_csv(season_stat, "data/trail_transition_season.csv")
