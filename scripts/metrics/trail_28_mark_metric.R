@@ -28,6 +28,13 @@ trail_mark_stat <-
     group_by(gameId, possNum) %>%
     slice(which.max(sum(by_28_mark)/n_frames))
 
+poss_stat <-
+    trail_mark_stat %>%
+    group_by(gameId, possNum, playerId) %>%
+    summarise(perc_time_by_28_mark = sum(by_28_mark)/sum(n_frames)) %>%
+    arrange(gameId, possNum, playerId) %>%
+    select(gameId, possNum, playerId, perc_time_by_28_mark)
+
 game_stat <-
     trail_mark_stat %>%
     group_by(gameId, playerId) %>%
@@ -43,6 +50,6 @@ season_stat <-
     arrange(playerId, season) %>%
     select(playerId, season, perc_time_by_28_mark)
 
-write_csv(trail_mark_stat, "data/trail_28_mark_poss.csv")
+write_csv(poss_stat, "data/trail_28_mark_poss.csv")
 write_csv(game_stat, "data/trail_28_mark_games.csv")
 write_csv(season_stat, "data/trail_28_mark_season.csv")

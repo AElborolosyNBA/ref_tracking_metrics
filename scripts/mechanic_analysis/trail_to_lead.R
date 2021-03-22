@@ -53,6 +53,7 @@ SELECT
     grs.gameId,
     grs.possNum,
     grs.eventId,
+    grs.ratingSeqNo,
     grs.respRefId,
     grs.playerAction,
     grs.called

@@ -45,6 +45,12 @@ ft_line_stats <-
     group_by(gameId, possNum) %>%
     slice(which.max(by_ft_line/n_frames))
 
+poss_stat <-
+    ft_line_stats %>%
+    group_by(gameId, possNum, playerId) %>%
+    summarise(perc_time_by_ft_line_ext = sum(by_ft_line)/sum(n_frames)) %>%
+    select(gameId, possNum, playerId, perc_time_by_ft_line_ext)
+
 game_stat <- 
     ft_line_stats %>%
     group_by(gameId, playerId) %>%
@@ -58,5 +64,6 @@ season_stat <-
     summarise(perc_time_by_ft_line_ext = sum(by_ft_line)/sum(n_frames)) %>%
     select(season, playerId, perc_time_by_ft_line_ext)
 
+write_csv(poss_stat, "data/slot_ft_line_poss.csv")
 write_csv(game_stat, "data/slot_ft_line_games.csv")
 write_csv(season_stat, "data/slot_ft_line_season.csv")

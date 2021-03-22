@@ -52,6 +52,11 @@ trailing_halfcourt_stat <-
     group_by(gameId, possNum) %>%
     slice(which.max(trail_behind_ball/n_frames))
 
+poss_stat <-
+    trailing_halfcourt_stat %>%
+    mutate(perc_time_behind_ball_halfcourt = trail_behind_ball/n_frames) %>%
+    select(gameId, playerId, possNum, perc_time_behind_ball_halfcourt)
+
 game_stat <-
     trailing_halfcourt_stat %>%
     group_by(gameId, playerId) %>%
@@ -79,5 +84,6 @@ season_stat <-
     arrange(playerId, season) %>%
     select(playerId, season, perc_time_behind_ball_halfcourt)
 
+write_csv(poss_stat, "data/trail_halfcourt_poss.csv")
 write_csv(game_stat, "data/trail_halfcourt_games.csv")
 write_csv(season_stat, "data/trail_halfcourt_season.csv")
