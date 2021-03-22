@@ -45,6 +45,19 @@ baseline_stat <-
     group_by(gameId, possNum) %>%
     slice(which.max(wide_lead/n_frames))
 
+poss_stat <-
+    baseline_stat %>%
+    group_by(gameId, possNum, playerId) %>%
+    summarise(
+        wide_lead = sum(wide_lead),
+        n_frames = sum(n_frames)
+    ) %>%
+    mutate(
+        perc_time_in_base_position_lead = wide_lead/n_frames
+    ) %>%
+    arrange(gameId, possNum, playerId) %>%
+    select(gameId, possNum, playerId, perc_time_in_base_position_lead)
+
 game_stat <-
     baseline_stat %>%
     group_by(gameId, playerId) %>%
@@ -72,6 +85,6 @@ season_stat <-
     arrange(playerId, season) %>%
     select(playerId, season, perc_time_in_base_position_lead)
 
-write_csv(baseline_stat, "data/wide_lead_poss.csv")
+write_csv(poss_stat, "data/wide_lead_poss.csv")
 write_csv(game_stat, "data/wide_lead_games.csv")
 write_csv(season_stat, "data/wide_lead_season.csv")
