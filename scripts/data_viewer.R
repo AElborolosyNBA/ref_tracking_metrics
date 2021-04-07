@@ -13,8 +13,10 @@ library(tidyr)
 options(gargle_oauth_email = TRUE)
 
 # Update all the metric files.
-scripts <- list.files("./scripts/metrics/", full.names = TRUE)
-do.call(file.remove, list(list.files("./data/", full.names = TRUE)))
+scripts <- list.files(
+    "./scripts/metrics", full.names = TRUE, include.dirs = FALSE
+)
+# do.call(file.remove, list(list.files("./data/", full.names = TRUE)))
 
 for (metric in scripts) {
     print(metric)
@@ -27,10 +29,7 @@ ref_name_map <-
     distinct() %>%
     collect()
 
-files <- paste0(
-    "./data/",
-    list.files("./data/")
-)
+files <- list.files("./data", full.names = TRUE, include.dirs = FALSE)
 
 season_data <- NULL
 poss_data <- NULL
