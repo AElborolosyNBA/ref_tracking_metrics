@@ -54,60 +54,6 @@ poss <- tbl(gbq, "nba-tracking-data.NbaPlayerTracking.Possessions")
 gbq_reviews <- tbl(gbq, "bball-strategy-analytics.GrsReviews.Reviews")
 ref_jerseys <- tbl(gbq, "bball-strategy-analytics.GrsReviews.JerseyLookUp")
 
-# Function to list all the referees
-list_referees <- function(sql_server) {
-    dbGetQuery(sql_server, "EXEC [sp_grs_referee_leaderboard]")
-}
-
-# Identify L/S/T Ref for each possession of a game.
-identify_ref_position <- function(gbq) {
-    DBI::dbGetQuery(
-        gbq,
-        "
-        SELECT
-            gameDate,
-        	gameId,
-            possNum,
-	        playerId,
-	        officialId,
-            season,
-	        CASE WHEN dist_rank = 1 THEN 'Lead'
-	             WHEN dist_rank = 2 THEN 'Slot'
-	             WHEN dist_rank = 3 THEN 'Trail' END AS playerType
-        FROM
-	        (
-	        SELECT
-		        track.gameDate,
-		        track.gameId,
-                poss.possNum,
-		        track.playerId,
-		        jersey.officialId,
-                jersey.season,
-		        row_number() OVER(
-		            PARTITION BY track.gameId, track.wcTime, track.frameId
-	                ORDER BY
-		                SQRT(POW(x - basketX, 2) + POW(y, 2))) AS dist_rank
-	        FROM
-		        `nba-tracking-data.NbaPlayerTracking.Tracking` track
-	        INNER JOIN `bball-strategy-analytics.GrsReviews.JerseyLookUp` jersey ON
-		        track.playerId = jersey.jerseyNum
-	        INNER JOIN `nba-tracking-data.NbaPlayerTracking.Possessions` poss ON
-		        poss.gameDate = track.gameDate
-		        AND poss.gameId = track.gameId
-		        AND track.wcTime BETWEEN poss.wcStart AND poss.wcEnd
-	        WHERE
-                SUBSTR(track.gameId, 4, 2) = SUBSTR(CAST(jersey.season AS STRING), 3, 2)
-                AND track.teamId = 0
-                -- Remove possessions shorter than 3 seconds
-                AND track.wcTime = poss.wcStart + 3000) poss_info
-        WHERE
-            dist_rank <= 3 -- 3 Referees
-        ORDER BY
-            gameDate, gameId, possNum
-        "
-    ) %>%
-        select(-season)
-}
 
 filter_games <- function(season_filt) {
     #' Helper function that constructs the regex for games in the current season.

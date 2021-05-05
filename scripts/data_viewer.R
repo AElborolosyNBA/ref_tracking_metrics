@@ -12,6 +12,16 @@ library(tidyr)
 
 options(gargle_oauth_email = TRUE)
 
+#' New Process would look like
+#' 1. Identify games to exclude
+#' 2. For every metric:
+#' 2a. Call poss level function.
+#' 2b. Append to master poss level data
+#' 2c. Spread data into wide format.
+#' 3. Append new poss data to poss table
+#' 4. Game/Season level data are views of poss table
+#' 4a. Game could stay as a table since data is being added at game level.
+
 update_metric_data <- function() {
     #' Updates all the metrics files by running their respective scripts.
     #'
