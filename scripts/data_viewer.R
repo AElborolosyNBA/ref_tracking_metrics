@@ -12,7 +12,7 @@ library(tidyr)
 
 options(gargle_oauth_email = TRUE)
 
-#' Process would look like
+#' New Process would look like
 #' 1. Identify games to exclude
 #' 2. For every metric:
 #' 2a. Call poss level function.
@@ -22,17 +22,75 @@ options(gargle_oauth_email = TRUE)
 #' 4. Game/Season level data are views of poss table
 #' 4a. Game could stay as a table since data is being added at game level.
 
-
-# Update all the metric files.
-scripts <- list.files(
-    "./scripts/metrics", full.names = TRUE, include.dirs = FALSE
-)
-scripts <- scripts[grep("\\.R$", scripts)]
-
-for (metric in scripts) {
-    print(metric)
-    source(metric)
+update_metric_data <- function() {
+    #' Updates all the metrics files by running their respective scripts.
+    #'
+    #' @return NA
+    
+    scripts <- list.files(
+        "./scripts/metrics", full.names = TRUE, include.dirs = FALSE
+    )
+    scripts <- scripts[grep("\\.R$", scripts)]
+    
+    for (metric in scripts) {
+        print(metric)
+        source(metric)
+    }
+    
+    return(NA)
 }
+
+join_metrics <- function(file_regex) {
+    #' Join metric datas into a single tibble.
+    #' 
+    #' @param file_regex (char vector) Regex to use to identify files.
+    #' 
+    #' @return metrics (tibble) Tibble of metrics data joined together.
+    #' 
+    files <- list.files(
+        "./data/", full.names = TRUE, include.dirs = FALSE
+    )
+    files <- files[grep(file_regex, files)]
+    
+    metrics <- NULL
+    for (file in files) {
+        print(file)
+        tracking_metric <- read_csv(file)
+        if (is.null(metrics)) {
+            metrics <- tracking_metric
+        } else {
+            metrics <- full_join(metrics, tracking_metric)
+        }
+    }
+    
+    return(metrics)
+}
+
+update_table <- function(
+    table_name, data_regex, ref_name_map, agg_file, sql_con
+) {
+    #' Update DB Table w/ refreshed metric data
+    #' 
+    #' @param table_name (char vector) Name of DB Table
+    #' @param data_regex (char vector) Regex used to find mechanic files
+    #' @param ref_name_map (Tibble) Mapping of ref IDs to their names
+    #' @param agg_file (char vector) Name of file to save joined data to.
+    #' @param sql_con (DBI Con) Connection to db_NBA_BSA database.
+    #' 
+    #' @return NA
+    
+    metrics <-
+        join_metrics(data_regex) %>%
+        inner_join(ref_name_map) %>%
+        select(-playerId)
+    
+    write_csv(metrics, agg_file)
+    dbWriteTable(sql_con, table_name, metrics, overwrite=TRUE)
+    
+    return(NA)
+}
+
+source("scripts/helper.R")
 
 ref_name_map <-
     ref_jerseys %>%
@@ -40,73 +98,21 @@ ref_name_map <-
     distinct() %>%
     collect()
 
-files <- list.files("./data", full.names = TRUE, include.dirs = FALSE)
-files <- files[grep("\\.csv$", files)]
-print(files)
+update_metric_data()
 
-season_data <- NULL
-poss_data <- NULL
-game_data <- NULL
-
-for (file in files) {
-    print(file)
-    tracking_metric <- read_csv(file)
-    if (str_detect(file, "_games")) {
-        if (is.null(game_data)) {
-            game_data <- tracking_metric
-        } else {
-            game_data <- full_join(game_data, tracking_metric)
-        }
-    } else if (str_detect(file, "_season")) {
-        if (is.null(season_data)) {
-            season_data <- tracking_metric
-        } else {
-            season_data <- full_join(season_data, tracking_metric)
-        }
-    } else if (str_detect(file, "_poss")) {
-        if (is.null(poss_data)) {
-            poss_data <- tracking_metric
-        } else {
-            poss_data <- full_join(poss_data, tracking_metric)
-        }
-    }
-}
-
-poss_data <-
-    inner_join(ref_name_map, poss_data) %>%
-    select(-playerId)
-
-game_data <-
-    inner_join(ref_name_map, game_data) %>%
-    select(-playerId) 
-
-season_data <-
-    inner_join(ref_name_map, season_data) %>%
-    select(-playerId) 
-
-write_csv(poss_data, "data/poss_aggregate.csv")
-write_csv(game_data, "data/game_aggregate.csv")
-write_csv(season_data, "data/season_aggregate.csv")
-
-dbWriteTable(
-    sql_server,
-    "referee_tracking_metrics_possession",
-    poss_data,
-    overwrite=TRUE
+update_table(
+    "referee_tracking_metrics_possession", "_poss\\.csv$",
+    ref_name_map, "data/poss_aggregate.csv", sql_server
 )
 
-dbWriteTable(
-    sql_server,
-    "referee_tracking_metrics_game",
-    game_data,
-    overwrite=TRUE
+update_table(
+    "referee_tracking_metrics_game", "_games\\.csv$",
+    ref_name_map, "data/game_aggregate.csv", sql_server
 )
 
-dbWriteTable(
-    sql_server,
-    "referee_tracking_metrics_season",
-    season_data,
-    overwrite=TRUE
+update_table(
+    "referee_tracking_metrics_season", "_season\\.csv$",
+    ref_name_map, "data/season_aggregate.csv", sql_server
 )
 
 print(paste("Process run successfully on", Sys.time()))
