@@ -12,11 +12,22 @@ library(tidyr)
 
 options(gargle_oauth_email = TRUE)
 
+#' Process would look like
+#' 1. Identify games to exclude
+#' 2. For every metric:
+#' 2a. Call poss level function.
+#' 2b. Append to master poss level data
+#' 2c. Spread data into wide format.
+#' 3. Append new poss data to poss table
+#' 4. Game/Season level data are views of poss table
+#' 4a. Game could stay as a table since data is being added at game level.
+
+
 # Update all the metric files.
 scripts <- list.files(
     "./scripts/metrics", full.names = TRUE, include.dirs = FALSE
 )
-# do.call(file.remove, list(list.files("./data/", full.names = TRUE)))
+scripts <- scripts[grep("\\.R$", scripts)]
 
 for (metric in scripts) {
     print(metric)
@@ -30,6 +41,8 @@ ref_name_map <-
     collect()
 
 files <- list.files("./data", full.names = TRUE, include.dirs = FALSE)
+files <- files[grep("\\.csv$", files)]
+print(files)
 
 season_data <- NULL
 poss_data <- NULL

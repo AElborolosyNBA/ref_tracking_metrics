@@ -14,9 +14,11 @@ library(stringr)
 
 source("scripts/helper.R")
 
-flag_errors <- function(gbq_con, sql_con, call_type, is_update, excluded_gid) {
+flag_errors <- function(
+    gbq_con, sql_con, call_type, is_update, included_dates, included_gid
+) {
     #' @description 
-    #' Acquire reviews and organize by halfcourt vs transition & role (LST) ----
+    #' Acquire reviews and organize by halfcourt vs transition & role (LST)
     #' Error List:
     #' Halfcourt Lead: Is Lead Wide?
     #' Halfcourt Slot: Is Slot Above/Below/At FT Line
@@ -31,11 +33,12 @@ flag_errors <- function(gbq_con, sql_con, call_type, is_update, excluded_gid) {
     #' 
     #' @param is_update (Bool): Get entire dataset or just new games.
     #' 
-    #' @param excluded_gid (Char Vector): game IDs to exclude from table
+    #' @param included_dates (Char Vector): dates to use for is_update mode
     #' 
+    #' @param included_gid (Char Vector): games to use for is_update mode
     #' 
     #' @return flags (Tibble) Flagged reviews
-    season_regex <- paste0("00_", substr(identify_season(), 3, 4), "%")
+    season_regex <- filter_games("_")
     current_season <- identify_season()
     
     middle_of_pack <-
@@ -160,14 +163,33 @@ flag_errors <- function(gbq_con, sql_con, call_type, is_update, excluded_gid) {
 update_upload_flags <- function(gbq_con, sql_server, is_update, call_type) {
     if (is_update) {
         
-        existing_games <-
+        missing_data <-
             dbGetQuery(
                 sql_server,
-                "SELECT DISTINCT game_id FROM referee_tracking_metric_flags"
-            ) %>%
-            pull(game_id)
+                paste0(
+                "
+                SELECT
+                	DISTINCT CAST(g.Date_EST AS DATE) AS date_est,
+                    g.game_id
+                FROM
+                	referee_tracking_metrics_flags rtmf
+                RIGHT JOIN
+                	db_NBA_mCoreStats.dbo.Game g
+                	ON g.Game_id = rtmf.game_id
+                WHERE
+                	rtmf.Game_id IS NULL
+                	AND g.League_id = '00'
+                ",
+                "AND g.game_id LIKE '", season_regex, "'"
+                )
+            )
+        
+        missing_dates <- missing_data %>% pull(date_est)
+        missing_games <- missing_data %>% pull(game_id)
 
-        flags <- flag_errors(gbq, sql_server, call_type, TRUE, existing_games)
+        flags <- flag_errors(
+            gbq, sql_server, call_type, TRUE, missing_dates, missing_games
+        )
         
         dbWriteTable(
             conn=sql_server,
