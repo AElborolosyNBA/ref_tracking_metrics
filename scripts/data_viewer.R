@@ -87,7 +87,7 @@ update_table <- function(
     write_csv(metrics, agg_file)
     dbWriteTable(sql_con, table_name, metrics, overwrite=TRUE)
     
-    return(NA)
+    return(metrics)
 }
 
 source("scripts/helper.R")
@@ -98,7 +98,20 @@ ref_name_map <-
     distinct() %>%
     collect()
 
-update_metric_data()
+# update_metric_data()
+
+poss <-
+    join_metrics("_poss\\.csv$") %>%
+    inner_join(ref_name_map) %>%
+    select(-playerId)
+print(poss)
+bq_perform_upload(
+    x = "bball-strategy-analytics.GrsReviews.tracking_metrics_possession",
+    fields = as_bq_fields(poss),
+    values = poss,
+    create_disposition = "CREATE_IF_NEEDED",
+    write_disposition = "WRITE_TRUNCATE"
+)
 
 update_table(
     "referee_tracking_metrics_possession", "_poss\\.csv$",
