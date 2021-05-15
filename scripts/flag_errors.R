@@ -56,19 +56,31 @@ flag_errors <- function(
         filter(teamId == 0) %>%
         mutate(season = as.integer(paste0("20", substr(gameId, 4, 5)))) %>%
         inner_join(ref_jerseys) %>%
-        select(gameDate, gameId, wcTime, respRefId = officialId, x, y, ballX) %>%
+        select(
+            gameDate, gameId, wcTime, respRefId = officialId, x, y, ballX
+        ) %>%
         inner_join(gbq_reviews) %>%
-        inner_join(poss, by = c("gameDate", "gameId", "possNum", "period")) %>%
+        inner_join(
+            poss, by = c("gameDate", "gameId", "possNum", "period")
+        ) %>%
         left_join(middle_of_pack) %>%
         mutate(
             callType = case_when(
                 (playerAction %in% c("INF", "WPA") & called == "C") ~ "CC",
                 (playerAction %in% c("INF") & called == "NC") ~ "INC",
-                (playerAction %in% c("NI", "SFA", "PFA", "BCA") & called == "C") ~ "IC",
-                (playerAction %in% c("NI", "SFA", "PFA", "BCA") & called == "NC") ~ "CNC",
+                (
+                    playerAction %in% c("NI", "SFA", "PFA", "BCA") &
+                    called == "C"
+                ) ~ "IC",
+                (
+                    playerAction %in% c("NI", "SFA", "PFA", "BCA") &
+                    called == "NC"
+                ) ~ "CNC",
                 TRUE ~ "None"
             ),
-            loc = if_else(sign(ballX) == sign(basketX), "Halfcourt", "Transition"),
+            loc = if_else(
+                sign(ballX) == sign(basketX), "Halfcourt", "Transition"
+            ),
             flagged = case_when(
                 loc == "Halfcourt" & respRefLoc == "Lead" ~ ifelse(
                     abs(y) > 12, 0, 1
@@ -91,12 +103,17 @@ flag_errors <- function(
                 TRUE ~ 3 # Number code for no flag covers this.
             ),
             mechanic = case_when(
-                loc == "Halfcourt" & respRefLoc == "Lead" ~ "Wide Lead",
-                loc == "Halfcourt" & respRefLoc == "Slot" ~ "By FT Line Ext",
-                loc == "Halfcourt" & respRefLoc == "Trail" ~ "Trailing Ball - Halfcourt",
-                loc == "Transition" & respRefLoc == "Lead" ~ "Lead at Basket",
+                loc == "Halfcourt" & respRefLoc == "Lead" ~
+                    "Wide Lead",
+                loc == "Halfcourt" & respRefLoc == "Slot" ~
+                    "By FT Line Ext",
+                loc == "Halfcourt" & respRefLoc == "Trail" ~
+                    "Trailing Ball - Halfcourt",
+                loc == "Transition" & respRefLoc == "Lead" ~
+                    "Lead at Basket",
                 loc == "Transition" & respRefLoc == "Slot" ~ "By the Pack",
-                loc == "Transition" & respRefLoc == "Trail" ~ "Trailing Ball - Transition"
+                loc == "Transition" & respRefLoc == "Trail" ~
+                    "Trailing Ball - Transition"
             )
         ) %>%
         filter(
@@ -104,6 +121,7 @@ flag_errors <- function(
             respRefLoc %in% c("Lead", "Slot", "Trail")
         ) %>%
         select(
+            game_date = gameDate,
             game_id = gameId,
             event_id = eventId,
             rating_seq_no = ratingSeqNo,
@@ -117,7 +135,8 @@ flag_errors <- function(
             flags %>%
             filter(
                 game_id %LIKE% season_regex,
-                !(game_id %in% excluded_gid)
+                # (game_date %in% included_dates),
+                game_id %in% included_gid
             )
     }
     
@@ -157,10 +176,12 @@ flag_errors <- function(
             game_id, event_id, rating_seq_no, call_type,
             role, loc, flagged, mechanic, video_url
         ) %>%
-        filter(between(flagged,0 , 1))
+        filter(between(flagged, 0, 1))
 }
 
-update_upload_flags <- function(gbq_con, sql_server, is_update, call_type) {
+update_upload_flags <- function(
+    gbq_con, sql_server, is_update, call_type
+) {
     if (is_update) {
         
         missing_data <-
@@ -180,7 +201,7 @@ update_upload_flags <- function(gbq_con, sql_server, is_update, call_type) {
                 	rtmf.Game_id IS NULL
                 	AND g.League_id = '00'
                 ",
-                "AND g.game_id LIKE '", season_regex, "'"
+                "AND g.game_id LIKE '", filter_games("_"), "'"
                 )
             )
         
@@ -222,5 +243,7 @@ update_upload_flags <- function(gbq_con, sql_server, is_update, call_type) {
     }
 }
 
+
 # update_upload_flags(gbq, sql_server, is_update = FALSE, call_type = NULL)
 update_upload_flags(gbq, sql_server, is_update = TRUE, call_type = NULL)
+print(paste("Process run successfully on", Sys.time()))

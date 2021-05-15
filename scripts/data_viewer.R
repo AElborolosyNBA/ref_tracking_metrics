@@ -98,7 +98,7 @@ ref_name_map <-
     distinct() %>%
     collect()
 
-# update_metric_data()
+update_metric_data()
 
 poss <-
     join_metrics("_poss\\.csv$") %>%
