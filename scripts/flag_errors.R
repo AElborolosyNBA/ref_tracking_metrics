@@ -190,18 +190,18 @@ update_upload_flags <- function(
                 paste0(
                 "
                 SELECT
-                	DISTINCT CAST(g.Date_EST AS DATE) AS date_est,
+                    DISTINCT CAST(g.Date_EST AS DATE) AS date_est,
                     g.game_id
                 FROM
-                	referee_tracking_metrics_flags rtmf
-                RIGHT JOIN
-                	db_NBA_mCoreStats.dbo.Game g
-                	ON g.Game_id = rtmf.game_id
+                    db_NBA_mCoreStats.dbo.Game g
+                INNER JOIN referee_tracking_metrics_game rtmg ON
+                    rtmg.gameId = g.Game_id
+                LEFT JOIN referee_tracking_metrics_flags rtmf ON
+                    rtmg.gameId = rtmf.game_id
                 WHERE
-                	rtmf.Game_id IS NULL
-                	AND g.League_id = '00'
-                ",
-                "AND g.game_id LIKE '", filter_games("_"), "'"
+                    rtmf.game_id IS NULL
+                    AND g.League_id = '00'
+                    AND g.game_id LIKE '", filter_games("_"), "'"
                 )
             )
         
@@ -211,7 +211,9 @@ update_upload_flags <- function(
         flags <- flag_errors(
             gbq, sql_server, call_type, TRUE, missing_dates, missing_games
         )
-        
+
+        print(flags)
+
         dbWriteTable(
             conn=sql_server,
             name="referee_tracking_metrics_flags",
