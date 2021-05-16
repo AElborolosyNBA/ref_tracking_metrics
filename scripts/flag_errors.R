@@ -212,6 +212,8 @@ update_upload_flags <- function(
             gbq, sql_server, call_type, TRUE, missing_dates, missing_games
         )
 
+        print(flags)
+
         dbWriteTable(
             conn=sql_server,
             name="referee_tracking_metrics_flags",
